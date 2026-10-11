@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<!-- ====================================================================
+     FRONTEND LAYER: index.html
+     File: frontend/index.html
+     Project: TransitMatch (Team BYTEFORCE - CBC006)
+     College: Ballari Institute of Technology and Management
+     Domain: Software & Web Development
+     Problem Statement: PS-3 Public Transport Lost-and-Found Matching
+==================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransitMatch — Intelligent Lost & Found Matching</title>
+  
+  <!-- Separate CSS Stylesheet Link -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Web Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-role="passenger">
+
+  <!-- TOP BRANDING & BAR -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <div class="brand-section">
+        <div class="brand-logo">
+          <i class="fa-solid fa-cube"></i>
+        </div>
+        <div>
+          <div class="brand-title">TransitMatch <span class="badge-tag">CBC 2.0</span></div>
+          <div class="brand-subtitle">Team BYTEFORCE (CBC006) • Ballari Institute of Technology & Management</div>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+
+        <button class="btn btn-outline" onclick="loadDemoScenario()" title="Pre-populates presentation scenarios">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Load Demo Data</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO BANNER -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <div class="tag-pill"><i class="fa-solid fa-circle-check"></i> Problem Statement PS-3 • Software & Web Development</div>
+      <h1>Intelligent Lost & Found Matching with Secure Ownership Verification</h1>
+      <p>Combining weighted attribute scoring, journey-aware transit routing, TF-IDF NLP similarity, and secret-clue verification to stop fraudulent claims and reunite passengers with their belongings.</p>
+      
+      <div class="quick-stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotalItems">-</div>
+          <div class="stat-label">Active Reports</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statMatchesFound">-</div>
+          <div class="stat-label">AI Matches Evaluated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-success" id="statVerifiedCount">-</div>
+          <div class="stat-label">Verified Handovers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-warning" id="statPatternsAlert">-</div>
+          <div class="stat-label">Incident Pattern Flags</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="tabs-nav-bar">
+    <div class="tabs-container">
+      <button class="tab-btn active" id="browseTabBtn" onclick="switchTab('tab-browse')">
+        <i class="fa-solid fa-magnifying-glass"></i> Browse & Privacy Search
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-lost')">
+        <i class="fa-solid fa-circle-plus"></i> Report Lost Item
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-found')">
+        <i class="fa-solid fa-box-archive"></i> Report Found Item
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-matching')">
+        <i class="fa-solid fa-diagram-project"></i> AI Match Ranking
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-verify')">
+        <i class="fa-solid fa-shield-halved"></i> Secret-Clue Verification
+      </button>
+      <button class="tab-btn staff-only" id="dashTabBtn" onclick="switchTab('tab-dashboard')">
+        <i class="fa-solid fa-chart-pie"></i> Admin Operations Dashboard
+      </button>
+      <button class="tab-btn staff-only" onclick="switchTab('tab-handover')">
+        <i class="fa-solid fa-handshake"></i> Staff Handover & Audit
+      </button>
+      <button class="tab-btn staff-only" onclick="switchTab('tab-patterns')">
+        <i class="fa-solid fa-triangle-exclamation"></i> Incident Patterns
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="main-content-wrap">
+
+    <!-- ==================== TAB 0: ANALYTICS & RECOVERY DASHBOARD (STAFF/ADMIN ONLY) ==================== -->
+    <div id="tab-dashboard" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2><i class="fa-solid fa-chart-line"></i> Transit Authority Operations & Recovery Dashboard</h2>
+          <p class="text-muted">Real-time KPIs, AI matching efficiency, route incident density, and custody resolution tracking (Staff/Admin Only).</p>
+        </div>
+        <div>
+          <button class="btn btn-outline" onclick="loadDashboardData()"><i class="fa-solid fa-arrows-rotate"></i> Refresh Metrics</button>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Cards Row -->
+      <div class="dashboard-kpi-grid">
+        <div class="kpi-card highlight-card">
+          <div class="kpi-icon"><i class="fa-solid fa-bullseye"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value text-cyan" id="dashRecoveryRate">0%</div>
+            <div class="kpi-title">Recovery Success Rate</div>
+            <div class="kpi-subtitle">Lost items matched & returned</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon icon-lost"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value text-danger" id="dashLostCount">0</div>
+            <div class="kpi-title">Active Lost Reports</div>
+            <div class="kpi-subtitle">Filed by passengers</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon icon-found"><i class="fa-solid fa-box-open"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value text-success" id="dashFoundCount">0</div>
+            <div class="kpi-title">Depot Custody Items</div>
+            <div class="kpi-subtitle">Awaiting verified claim</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon icon-shield"><i class="fa-solid fa-diagram-project"></i></div>
+          <div class="kpi-info">
+            <div class="kpi-value text-cyan" id="dashMatchesCount">0</div>
+            <div class="kpi-title">AI Matches Evaluated</div>
+            <div class="kpi-subtitle">Multi-attribute pairings</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifecycle Stage Funnel -->
+      <div class="dashboard-section-card">
+        <div class="section-card-header">
+          <h3><i class="fa-solid fa-arrows-turn-to-dots"></i> Item Lifecycle Resolution Pipeline</h3>
+          <span class="badge-tag">End-to-End Workflow</span>
+        </div>
+        <p class="text-muted" style="margin-bottom: 16px;">Tracks progression of every property from initial report through AI ranking, clue verification, to final legal handover.</p>
+        
+        <div class="lifecycle-pipeline">
+          <div class="pipeline-step">
+            <div class="step-badge">1</div>
+            <div class="step-label">REPORTED</div>
+            <div class="step-count" id="pipeReported">0</div>
+            <div class="step-sub">Initial Lodging</div>
+          </div>
+          <div class="pipeline-connector"><i class="fa-solid fa-chevron-right"></i></div>
+
+          <div class="pipeline-step">
+            <div class="step-badge badge-warning">2</div>
+            <div class="step-label">POTENTIAL MATCH</div>
+            <div class="step-count text-warning" id="pipePotential">0</div>
+            <div class="step-sub">AI Ranked ≥ 60%</div>
+          </div>
+          <div class="pipeline-connector"><i class="fa-solid fa-chevron-right"></i></div>
+
+          <div class="pipeline-step">
+            <div class="step-badge badge-purple">3</div>
+            <div class="step-label">VERIFYING CLAIM</div>
+            <div class="step-count text-purple" id="pipeUnderReview">0</div>
+            <div class="step-sub">Secret-Clue Check</div>
+          </div>
+          <div class="pipeline-connector"><i class="fa-solid fa-chevron-right"></i></div>
+
+          <div class="pipeline-step">
+            <div class="step-badge badge-success">4</div>
+            <div class="step-label">VERIFIED</div>
+            <div class="step-count text-success" id="pipeVerified">0</div>
+            <div class="step-sub">Ownership Proven</div>
+          </div>
+          <div class="pipeline-connector"><i class="fa-solid fa-chevron-right"></i></div>
+
+          <div class="pipeline-step">
+            <div class="step-badge badge-gold">5</div>
+            <div class="step-label">HANDED OVER</div>
+            <div class="step-count text-cyan" id="pipeHandedOver">0</div>
+            <div class="step-sub">Custody Released</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-Column Distributions: Route Hotspots & Category Breakdown -->
+      <div class="dashboard-charts-grid">
+        <div class="dashboard-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-route"></i> Transit Route Incident Density</h3>
+            <span class="badge-tag">Hotspots</span>
+          </div>
+          <p class="text-muted">High-incidence routes flagged for enhanced station lost & found sweeps.</p>
+          <div id="routeHotspotsList" class="distribution-bars-list" style="margin-top: 14px;">
+            <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading route metrics...</div>
+          </div>
+        </div>
+
+        <div class="dashboard-section-card">
+          <div class="section-card-header">
+            <h3><i class="fa-solid fa-layer-group"></i> Property Category Distribution</h3>
+            <span class="badge-tag">Breakdown</span>
+          </div>
+          <p class="text-muted">Classification of personal belongings currently tracked in custody.</p>
+          <div id="categoryDistList" class="distribution-bars-list" style="margin-top: 14px;">
+            <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading category breakdown...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Activity Log Stream -->
+      <div class="dashboard-section-card">
+        <div class="section-card-header">
+          <h3><i class="fa-solid fa-clock-rotate-left"></i> Live Transit Authority Audit Activity Feed</h3>
+          <span class="badge-tag">Real-time Audit Log</span>
+        </div>
+        <p class="text-muted">Immutable events recorded by passengers, AI verifier algorithms, and transit depot staff officers.</p>
+        <div id="dashboardActivityFeed" class="activity-feed-list" style="margin-top: 16px;">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 1: BROWSE & PRIVACY SEARCH ==================== -->
+    <div id="tab-browse" class="tab-panel active">
+      <div class="panel-header">
+        <div>
+          <h2><i class="fa-solid fa-list-check"></i> Transit Belongings Registry</h2>
+          <p class="text-muted">Public search protects sensitive serial numbers and secret clues until authorized verification.</p>
+        </div>
+        <div class="search-filters-bar">
+          <input type="text" id="searchInput" placeholder="Search item, route, stop, color..." onkeyup="filterItems()">
+          <select id="typeFilter" onchange="filterItems()">
+            <option value="">All Types (Lost & Found)</option>
+            <option value="lost">Lost Items Only</option>
+            <option value="found">Found Items in Custody</option>
+          </select>
+          <select id="categoryFilter" onchange="filterItems()">
+            <option value="">All Categories</option>
+            <option value="Personal Accessories">Personal Accessories</option>
+            <option value="Wallets & Bags">Wallets & Bags</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Documents & IDs">Documents & IDs</option>
+          </select>
+          <button class="btn btn-primary" onclick="loadItems()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+        </div>
+      </div>
+
+      <div id="itemsGrid" class="items-grid">
+        <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading registry...</div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: REPORT LOST ITEM ==================== -->
+    <div id="tab-lost" class="tab-panel">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="icon-circle icon-lost"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div>
+            <h2>Report a Lost Item</h2>
+            <p>Provide detailed journey and item characteristics. Add a <strong>Secret Clue</strong> so only you can claim it later.</p>
+          </div>
+        </div>
+
+        <form id="lostItemForm" onsubmit="handleReportLost(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Your Name *</label>
+              <input type="text" id="lostReporterName" required placeholder="e.g. Rahul Sharma">
+            </div>
+            <div class="form-group">
+              <label>Phone / Email *</label>
+              <input type="text" id="lostReporterContact" required placeholder="e.g. +91 9876543210">
+            </div>
+
+            <div class="form-group">
+              <label>Item Name / Short Title *</label>
+              <input type="text" id="lostTitle" required placeholder="e.g. Blue Bottle, Brown Wallet">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="lostCategory" required>
+                <option value="Personal Accessories">Personal Accessories (Bottles, Umbrellas, Keys)</option>
+                <option value="Wallets & Bags">Wallets & Bags</option>
+                <option value="Electronics">Electronics (Phones, Laptops, Earbuds)</option>
+                <option value="Documents & IDs">Documents & Government IDs</option>
+                <option value="Clothing & Wearables">Clothing & Wearables</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Primary Color *</label>
+              <input type="text" id="lostColor" required placeholder="e.g. Blue, Dark Blue, Brown, Black">
+            </div>
+            <div class="form-group">
+              <label>Brand / Make</label>
+              <input type="text" id="lostBrand" placeholder="e.g. Milton, WildHorn, Dell, Apple">
+            </div>
+
+            <div class="form-group">
+              <label>Transit Route or Vehicle *</label>
+              <input type="text" id="lostRoute" required placeholder="e.g. Metro Purple Line, BMTC Bus Route 204">
+            </div>
+            <div class="form-group">
+              <label>Boarding Stop (Origin)</label>
+              <input type="text" id="lostStart" placeholder="e.g. MG Road Station, Majestic">
+            </div>
+
+            <div class="form-group">
+              <label>Destination Stop</label>
+              <input type="text" id="lostDest" placeholder="e.g. Indiranagar, Electronic City">
+            </div>
+            <div class="form-group">
+              <label>Incident Location / Seat Area</label>
+              <input type="text" id="lostLoc" placeholder="e.g. Coach C3 Seat 14, Upper Deck rear">
+            </div>
+
+            <div class="form-group full-width">
+              <label>Item Description *</label>
+              <textarea id="lostDesc" rows="3" required placeholder="Describe appearance, size, material, outer condition..."></textarea>
+            </div>
+
+            <div class="form-group full-width highlight-secret">
+              <label><i class="fa-solid fa-lock"></i> Secret Clue (Private Owner Verification Mark) *</label>
+              <input type="text" id="lostSecretClue" required placeholder="Hidden detail unknown to public: e.g. 'Astronaut cartoon sticker on cap ring, small scratch at bottom'">
+              <small class="text-muted"><i class="fa-solid fa-circle-info"></i> This remains confidential and is used to mathematically verify you against competing claimants.</small>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Submit Lost Item Report</button>
+            <button type="reset" class="btn btn-secondary">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 3: REPORT FOUND ITEM ==================== -->
+    <div id="tab-found" class="tab-panel">
+      <div class="form-card">
+        <div class="form-header">
+          <div class="icon-circle icon-found"><i class="fa-solid fa-box"></i></div>
+          <div>
+            <h2>Report a Found Item (Transit Custody)</h2>
+            <p>Conductors, passengers, and depot staff record recovered items. Secure custody depot details are tracked.</p>
+          </div>
+        </div>
+
+        <form id="foundItemForm" onsubmit="handleReportFound(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Finder / Staff Officer Name *</label>
+              <input type="text" id="foundReporterName" required placeholder="e.g. Conductor Ramesh / Officer Suresh">
+            </div>
+            <div class="form-group">
+              <label>Contact / Depot Extension *</label>
+              <input type="text" id="foundReporterContact" required placeholder="e.g. +91 9444123456">
+            </div>
+
+            <div class="form-group">
+              <label>Item Name / Short Title *</label>
+              <input type="text" id="foundTitle" required placeholder="e.g. Dark-Blue Metal Bottle">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="foundCategory" required>
+                <option value="Personal Accessories">Personal Accessories</option>
+                <option value="Wallets & Bags">Wallets & Bags</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Documents & IDs">Documents & IDs</option>
+                <option value="Clothing & Wearables">Clothing & Wearables</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Observed Color *</label>
+              <input type="text" id="foundColor" required placeholder="e.g. Dark Blue, Silver, Tan Brown">
+            </div>
+            <div class="form-group">
+              <label>Brand / Logo Visible</label>
+              <input type="text" id="foundBrand" placeholder="e.g. Milton Thermosteel, Wildhorn">
+            </div>
+
+            <div class="form-group">
+              <label>Vehicle / Line Found On *</label>
+              <input type="text" id="foundRoute" required placeholder="e.g. Metro Purple Line, Bus 204">
+            </div>
+            <div class="form-group">
+              <label>Current Depot Custody Location *</label>
+              <input type="text" id="foundDepot" required placeholder="e.g. Baiyappanahalli Terminal Depot Locker #12">
+            </div>
+
+            <div class="form-group full-width">
+              <label>Detailed Description</label>
+              <textarea id="foundDesc" rows="3" required placeholder="Describe appearance, contents found, general wear and tear..."></textarea>
+            </div>
+
+            <div class="form-group full-width highlight-secret">
+              <label><i class="fa-solid fa-key"></i> Internal Secret Clue (Recorded by Custody Officer) *</label>
+              <input type="text" id="foundSecretClue" required placeholder="Secret inspection detail: e.g. 'Astronaut sticker on upper ring, dented base ring'">
+              <small class="text-muted"><i class="fa-solid fa-lock"></i> Hidden from public view. Used by AI to confirm genuine claimant.</small>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success"><i class="fa-solid fa-shield-check"></i> Register Found Item in Custody</button>
+            <button type="reset" class="btn btn-secondary">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: AI MATCH RANKING ENGINE ==================== -->
+    <div id="tab-matching" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2><i class="fa-solid fa-brain"></i> AI Multi-Attribute Match Ranking</h2>
+          <p class="text-muted">Calculates weighted scores across Category (25%), Color Affinity (15%), Brand (15%), Transit Journey (20%), Time Proximity (10%), and TF-IDF Cosine Similarity (15%).</p>
+        </div>
+        <div class="selector-box">
+          <label>Select Item to Match Against Registry:</label>
+          <select id="matchTargetSelector" onchange="runMatchEvaluation(this.value)">
+            <!-- Populated dynamically via script.js -->
+          </select>
+        </div>
+      </div>
+
+      <div id="matchEvaluationContainer">
+        <div class="empty-state">
+          <i class="fa-solid fa-diagram-project fa-3x"></i>
+          <h3>Select an item above to compute AI match rankings</h3>
+          <p>The system will compare candidate reports, rank them by confidence, and explain every scoring factor.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 5: SECRET CLUE OWNERSHIP VERIFICATION ==================== -->
+    <div id="tab-verify" class="tab-panel">
+      <div class="verification-layout">
+        <div class="form-card">
+          <div class="form-header">
+            <div class="icon-circle icon-shield"><i class="fa-solid fa-lock"></i></div>
+            <div>
+              <h2>Submit Secret-Clue Verification</h2>
+              <p>To prevent fraudulent claims, enter unique hidden marks, internal contents, or identifiers.</p>
+            </div>
+          </div>
+
+          <form id="verifyClaimForm" onsubmit="handleClaimVerification(event)">
+            <div class="form-group">
+              <label>Select Found Item to Claim *</label>
+              <select id="claimFoundItemSelect" required onchange="loadCompetingClaims(this.value)">
+                <!-- Loaded dynamically -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Your Full Name *</label>
+              <input type="text" id="claimantName" required placeholder="e.g. Rahul Sharma">
+            </div>
+
+            <div class="form-group">
+              <label>Contact Phone / ID *</label>
+              <input type="text" id="claimantContact" required placeholder="e.g. +91 9876543210">
+            </div>
+
+            <div class="form-group highlight-secret">
+              <label><i class="fa-solid fa-key"></i> Provide Secret Clue / Hidden Marks *</label>
+              <textarea id="claimantClue" rows="3" required placeholder="e.g. 'Has an astronaut cartoon sticker on the cap and a scratch on the bottom'"></textarea>
+              <small class="text-muted">The system performs semantic token matching without revealing custody records.</small>
+            </div>
+
+            <div class="form-group">
+              <label>Supporting Evidence / Purchase Proof Notes</label>
+              <input type="text" id="claimProofNotes" placeholder="e.g. Bill from Amazon dated Aug 2024, or Student ID card match">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fa-solid fa-shield-halved"></i> Verify Ownership with AI
+            </button>
+          </form>
+
+          <div id="verificationResultBox" class="verification-result-box" style="display:none;"></div>
+        </div>
+
+        <div class="claims-dispute-card">
+          <div class="dispute-header">
+            <h3><i class="fa-solid fa-users-viewfinder"></i> Multiple Claimant Dispute Resolution</h3>
+            <span class="badge-tag">Staff Escalation</span>
+          </div>
+          <p class="text-muted">Compares competing claimants using unique details, hidden marks, and proof.</p>
+
+          <div id="competingClaimsList" class="competing-list">
+            <div class="empty-state-sm">Select a found item on the left to inspect filed claims.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 6: STAFF HANDOVER & AUDIT TRAIL ==================== -->
+    <div id="tab-handover" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2><i class="fa-solid fa-handshake-angle"></i> Verified Handover & Status Audit Trail</h2>
+          <p class="text-muted">Authorized depot staff records identity checks and final release of property with immutable status logs.</p>
+        </div>
+      </div>
+
+      <div class="handover-layout">
+        <div class="form-card">
+          <h3>Record Physical Property Handover</h3>
+          <form id="handoverForm" onsubmit="handleHandoverSubmit(event)">
+            <div class="form-group">
+              <label>Select Verified Item to Handover *</label>
+              <select id="handoverItemSelect" required onchange="loadAuditHistory(this.value)">
+                <!-- Loaded dynamically -->
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Staff Officer Name *</label>
+              <input type="text" id="handoverStaffName" required value="Officer Suresh Kumar (Depot Staff)">
+            </div>
+
+            <div class="form-group">
+              <label>Recipient / Owner Name *</label>
+              <input type="text" id="handoverRecipientName" required placeholder="e.g. Rahul Sharma">
+            </div>
+
+            <div class="form-group">
+              <label>Government ID / Transit Card Verified *</label>
+              <select id="handoverIdProof">
+                <option value="Aadhaar Card Verified">Aadhaar Card</option>
+                <option value="College Student ID Card">College Student ID Card (BITM)</option>
+                <option value="Driving License">Driving License</option>
+                <option value="Metro Smart Card Registered">Metro Smart Card Account</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Custody Handover Remarks</label>
+              <textarea id="handoverRemarks" rows="2" placeholder="e.g. Physical item handed over after secret clue confirmation and photo ID verification."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block">
+              <i class="fa-solid fa-check-double"></i> Complete Handover & Close Ticket
+            </button>
+          </form>
+        </div>
+
+        <div class="audit-history-card">
+          <h3><i class="fa-solid fa-timeline"></i> Immutable Item Lifecycle History</h3>
+          <p class="text-muted">Tracks progression: <code>REPORTED</code> ➔ <code>POTENTIAL_MATCH</code> ➔ <code>CLAIM_UNDER_VERIFICATION</code> ➔ <code>VERIFIED</code> ➔ <code>HANDED_OVER</code>.</p>
+          
+          <div id="auditTimelineContainer" class="timeline-container">
+            <div class="empty-state-sm">Select an item to view complete lifecycle audit trail.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 7: INCIDENT PATTERNS & DUPLICATES ==================== -->
+    <div id="tab-patterns" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2><i class="fa-solid fa-network-wired"></i> Cross-Report Incident Pattern Detection</h2>
+          <p class="text-muted">Links related reports by route, time, and location to detect duplicate filings and transit loss hotspots.</p>
+        </div>
+        <button class="btn btn-outline" onclick="loadIncidentPatterns()"><i class="fa-solid fa-rotate-right"></i> Re-Scan Patterns</button>
+      </div>
+
+      <div class="patterns-grid" id="patternsContainer">
+        <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Scanning pattern heuristics...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==================== MULTILINGUAL AI CHATBOT WIDGET ==================== -->
+  <div class="chatbot-floating-wrapper" id="chatbotWrapper">
+    <button class="chatbot-toggle-btn" onclick="toggleChatbot()" title="Chat with TransitMatch AI Assistant">
+      <i class="fa-solid fa-comment-dots"></i>
+      <span class="chat-badge">AI</span>
+    </button>
+
+    <div class="chatbot-window" id="chatbotWindow">
+      <div class="chat-header">
+        <div class="chat-title">
+          <i class="fa-solid fa-robot"></i> TransitMatch AI Assistant
+        </div>
+        <div class="chat-lang-select">
+          <select id="chatLang" onchange="handleChatLangChange(this.value)">
+            <option value="en" selected>English</option>
+            <option value="hi">हिंदी (Hindi)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          </select>
+          <button class="chat-close-btn" onclick="toggleChatbot()">&times;</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-bubble bot-bubble">
+          Hello! I am your TransitMatch AI Assistant. How can I help you report or locate items on buses and trains today?
+        </div>
+      </div>
+
+      <div class="chat-quick-chips">
+        <span class="chip" onclick="sendQuickPrompt('How do I report a lost item?')">How to report?</span>
+        <span class="chip" onclick="sendQuickPrompt('How does secret clue verification work?')">Secret clue info</span>
+        <span class="chip" onclick="sendQuickPrompt('Where are found items stored?')">Depot locations</span>
+      </div>
+
+      <div class="chat-input-bar">
+        <input type="text" id="chatInput" placeholder="Ask in English, Hindi, or Kannada..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+        <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Separate Client JavaScript Link -->
+  <script src="script.js"></script>
+</body>
+</html>
